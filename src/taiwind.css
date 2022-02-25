@@ -1,0 +1,60 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html {
+	overflow-y: scroll;
+	scroll-behavior: smooth;
+	scrollbar-width: thin;
+}
+
+:root {
+	--animate-duration: 1000ms;
+	--animate-delay: 0.9s;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+
+input[type="number"] {
+	-moz-appearance: textfield;
+}
+/* 
+@layer base {
+	@font-face {
+		font-family: BloggerSans;
+		font-style: normal;
+		src: url("@/assets/fonts/BloggerSans-Medium.ttf") format("truetype");
+	}
+
+	@font-face {
+		font-family: Blogger Sans;
+		font-style: normal;
+		font-style: 500;
+		src: url("@/assets/fonts/BloggerSans-Medium.ttf") format("truetype");
+	}
+
+	@font-face {
+		font-family: Blogger Sans;
+		font-style: italic;
+		font-style: 500;
+		src: url("@/assets/fonts/BloggerSans-Medium-Italic.ttf") format("truetype");
+	}
+
+	@font-face {
+		font-family: Blogger Sans;
+		font-style: normal;
+		font-style: 700;
+		src: url("@/assets/fonts/BloggerSans-Bold.ttf") format("truetype");
+	}
+
+	@font-face {
+		font-family: Blogger Sans;
+		font-style: italic;
+		font-style: 700;
+		src: url("@/assets/fonts/BloggerSans-Bold-Italic.ttf") format("truetype");
+	}
+} */
