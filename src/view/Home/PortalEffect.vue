@@ -4,7 +4,7 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import cloudImage from "@/assets/images/smoke.png";
 
-let sizes = {
+const sizes = {
 	width: window.innerWidth,
 	height: window.innerHeight,
 };
@@ -12,35 +12,81 @@ let sizes = {
 onMounted(() => {
 	console.log("portal sss");
 	// Canvas
-	let canvas = document.querySelector("#portalEffPage");
+	const canvas = document.querySelector("#portalEffPage");
 
 	// Scene
-	let scene = new THREE.Scene();
+	const scene = new THREE.Scene();
 
 	// Objects
-	let geometry = new THREE.TorusGeometry(0.7, 0.2, 16, 100);
-	// let geometry = new THREE.BoxGeometry(1, 1, 1);
+	// const geometry = new THREE.TorusGeometry(0.7, 0.2, 16, 100);
+	// const geometry = new THREE.BoxGeometry(1, 1, 1);
 
 	// // Materials
-	// let material = new THREE.MeshBasicMaterial();
+	// const material = new THREE.MeshBasicMaterial();
 
 	// material.color = new THREE.Color(0xff0000);
 
 	// // Mesh
-	// let cube = new THREE.Mesh(geometry, material);
+	// const cube = new THREE.Mesh(geometry, material);
 	// scene.add(cube);
 
 	// cube.position.z = -5;
 
 	// Lights
 
-	// let sceneLight = new THREE.DirectionalLight(0xffffff, 0.5);
+	// const sceneLight = new THREE.DirectionalLight(0xffffff, 0.5);
 	// sceneLight.position.set(0, 0, 1);
 	// scene.add(sceneLight);
 
-	let portalLight = new THREE.PointLight(0x062d89, 30, 600, 1.7);
-	portalLight.position.set(0, 0, 250);
-	scene.add(portalLight);
+	const geometry = new THREE.TorusGeometry(10, 3, 16, 100);
+	const material = new THREE.MeshStandardMaterial({ color: 0xff6347 });
+	const torus = new THREE.Mesh(geometry, material);
+	torus.position.set(0, 0, -20);
+
+	scene.add(torus);
+
+	const pointLight = new THREE.PointLight(0xffffff);
+	pointLight.position.set(5, 5, 5);
+
+	const ambientLight = new THREE.AmbientLight(0xffffff);
+	scene.add(pointLight, ambientLight);
+
+	const addStar = () => {
+		const geometry = new THREE.SphereGeometry(0.25, 24, 24);
+		const material = new THREE.MeshStandardMaterial({ color: 0xffffff });
+		const star = new THREE.Mesh(geometry, material);
+
+		const [x, y, z] = Array(3)
+			.fill()
+			.map(() => THREE.MathUtils.randFloatSpread(100));
+
+		star.position.set(x, y, z);
+		scene.add(star);
+	};
+
+	Array(200).fill().forEach(addStar);
+
+	// Background
+
+	const spaceTexture = new THREE.TextureLoader().load("src/assets/images/smoke.png");
+	scene.background = spaceTexture;
+
+	// const portalTexture = new THREE.TextureLoader().load("src/assets/images/smoke.png");
+
+	// const portalParticles = [];
+
+	// const portalGeo = new THREE.PlaneBufferGeometry(350, 350);
+	// const portalMaterial = new THREE.MeshStandardMaterial({
+	// 	map: portalTexture,
+	// 	transparent: true,
+	// });
+	// for (let p = 880; p > 250; p--) {
+	// 	let particle = new THREE.Mesh(portalGeo, portalMaterial);
+	// 	particle.position.set(2, 2, 2);
+	// 	particle.rotation.z = Math.random() * 360;
+	// 	portalParticles.push(particle);
+	// 	scene.add(particle);
+	// }
 
 	/**
 	 * Sizes
@@ -65,55 +111,14 @@ onMounted(() => {
 	 * Camera
 	 */
 	// Base camera
-	let camera = new THREE.PerspectiveCamera(80, sizes.width / sizes.height, 0.1, 1000);
-	camera.position.x = 0;
-	camera.position.y = 0;
-	camera.position.z = 2;
+	const camera = new THREE.PerspectiveCamera(80, sizes.width / sizes.height, 0.1, 100);
+	camera.position.z = 20;
 	scene.add(camera);
-
-	let loader = new THREE.TextureLoader();
-
-	let portalParticles = [],
-		smokeParticles = [];
-
-	let texture = new THREE.TextureLoader().load("src/assets/images/smoke.png");
-
-	let portalGeo = new THREE.PlaneBufferGeometry(350, 350);
-	let portalMaterial = new THREE.MeshStandardMaterial({
-		map: texture,
-		transparent: true,
-	});
-
-	let smokeGeo = new THREE.PlaneBufferGeometry(1000, 1000);
-	let smokeMaterial = new THREE.MeshStandardMaterial({
-		map: texture,
-		transparent: true,
-	});
-
-	for (let p = 880; p > 250; p--) {
-		let particle = new THREE.Mesh(portalGeo, portalMaterial);
-		particle.position.set(
-			0.5 * p * Math.cos((4 * p * Math.PI) / 180),
-			0.5 * p * Math.sin((4 * p * Math.PI) / 180),
-			0.1 * p
-		);
-		particle.rotation.z = Math.random() * 360;
-		portalParticles.push(particle);
-		scene.add(particle);
-	}
-	for (let p = 0; p < 40; p++) {
-		let particle = new THREE.Mesh(smokeGeo, smokeMaterial);
-		particle.position.set(Math.random() * 1000 - 500, Math.random() * 400 - 200, 25);
-		particle.rotation.z = Math.random() * 360;
-		particle.material.opacity = 0.6;
-		portalParticles.push(particle);
-		scene.add(particle);
-	}
 
 	/**
 	 * Renderer
 	 */
-	let renderer = new THREE.WebGLRenderer({
+	const renderer = new THREE.WebGLRenderer({
 		canvas: canvas,
 		antialias: true,
 	});
@@ -126,28 +131,10 @@ onMounted(() => {
 	 * Animate
 	 */
 
-	let clock = new THREE.Clock();
-
-	let tick = () => {
-		let elapsedTime = clock.getElapsedTime();
-
-		let delta = clock.getDelta();
-
-		// Update objects
-		portalParticles.forEach(p => {
-			p.rotation.z -= delta * 1.5;
-		});
-
-		smokeParticles.forEach(p => {
-			p.rotation.z -= delta * 0.2;
-		});
-
-		if (Math.random() > 0.9) {
-			portalLight.power = 350 + Math.random() * 500;
-		}
-
-		// Update Orbital Controls
-		// controls.update()
+	const tick = () => {
+		torus.rotation.x += 0.01;
+		torus.rotation.y += 0.005;
+		torus.rotation.z += 0.01;
 
 		// Render
 		renderer.render(scene, camera);
