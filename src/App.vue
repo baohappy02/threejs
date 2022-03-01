@@ -1,9 +1,27 @@
-<script setup></script>
+<script setup>
+import { onBeforeMount } from "vue";
+import WebGL from "./checkWebGL.js";
+import Header from "@/components/Header.vue";
+
+onBeforeMount(() => {
+	if (WebGL.isWebGLAvailable()) {
+		// Initiate function or other initializations here
+
+		console.log("Your browser have webGL enabled");
+	} else {
+		console.log("Your browser have webGL disabled");
+	}
+});
+</script>
 
 <template>
 	<router-view v-slot="{ Component }">
 		<transition name="scale">
-			<component :is="Component" />
+			<div>
+				<Header />
+
+				<component :is="Component" />
+			</div>
 		</transition>
 	</router-view>
 </template>
